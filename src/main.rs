@@ -3,7 +3,9 @@ use eframe::{
     egui::Visuals,
     egui::{CentralPanel, ProgressBar},
 };
+use poll_promise::Promise;
 
+mod jetphotos;
 mod jetspotter;
 use jetspotter::{AppState, Jetspotter};
 
@@ -28,15 +30,13 @@ impl eframe::App for Jetspotter {
 
         self.render_top_panel(ctx);
 
-        let is_fetching = self.state == AppState::Fetching;
-
         CentralPanel::default().show(ctx, |ui| {
+            ui.set_enabled(self.state != AppState::Fetching);
+
             ui.columns(2, |cols| {
                 for (i, col) in cols.iter_mut().enumerate() {
-                    col.set_enabled(!is_fetching);
-
                     col.group(|ui| {
-                        if i == 0 && (self.aircraft.is_none()) {
+                        if i == 0 && self.aircraft.len() == 0 {
                             ui.set_enabled(false);
                         }
 
@@ -48,15 +48,49 @@ impl eframe::App for Jetspotter {
                     });
                 }
             });
-
-            if is_fetching {
-                ui.horizontal(|ui| {
-                    ui.spinner();
-                    ui.label("Fetching photos...")
-                });
-
-                ui.add(ProgressBar::new(0.5).text("50/100"));
-            }
         });
+
+        if self.state == AppState::Fetching {
+            if self.promise.is_none() {
+                let (sender, promise) = Promise::new();
+
+                jetphotos::fetch_photos(sender);
+
+                self.state = AppState::Fetching;
+                self.promise = Some(promise);
+            }
+
+            CentralPanel::default().show(ctx, |ui| {
+                if let Some(promise) = &self.promise {
+                    if let Some(result) = promise.ready() {
+                        match result {
+                            Ok(photo) => {
+                                self.aircraft.push(photo.to_owned());
+                                self.promise = None;
+
+                                if self.aircraft.len() as i32 == self.config.fetch_amount {
+                                    self.state = AppState::Menu;
+                                }
+                            }
+                            Err(error) => {
+                                panic!("Could not fetch: {}", error)
+                            }
+                        }
+                    }
+
+                    ui.horizontal(|ui| {
+                        ui.spinner();
+                        ui.label("Fetching photos...")
+                    });
+                    let progress = self.aircraft.len() as f32 / self.config.fetch_amount as f32;
+
+                    ui.add(ProgressBar::new(progress).text(format!(
+                        "{}/{}",
+                        self.aircraft.len(),
+                        self.config.fetch_amount
+                    )));
+                }
+            });
+        }
     }
 }

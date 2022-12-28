@@ -1,7 +1,10 @@
 use eframe::egui::{self, DragValue, Ui};
 use eframe::egui::{Context, TopBottomPanel};
+use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+
+use crate::jetphotos::AircraftPhoto;
 
 #[derive(Serialize, Deserialize)]
 pub struct JetspotterConfig {
@@ -42,16 +45,18 @@ pub enum AppState {
 
 pub struct Jetspotter {
     pub config: JetspotterConfig,
-    pub aircraft: Option<Vec<()>>,
+    pub aircraft: Vec<AircraftPhoto>,
     pub state: AppState,
+    pub promise: Option<Promise<ehttp::Result<AircraftPhoto>>>,
 }
 
 impl Jetspotter {
     pub fn new() -> Self {
         Jetspotter {
             config: JetspotterConfig::load(),
-            aircraft: None,
+            aircraft: Vec::new(),
             state: AppState::Menu,
+            promise: None,
         }
     }
 
@@ -80,15 +85,12 @@ impl Jetspotter {
 
     pub fn render_play_panel(&mut self, ui: &mut Ui) {
         ui.heading("Play");
+        if ui.button("Play").clicked() {
+            println!("Playing");
+        }
     }
 
     pub fn render_fetch_aircraft_panel(&mut self, ui: &mut Ui) {
-        ui.heading(if self.aircraft.is_some() {
-            "Aircraft found!"
-        } else {
-            "No aircraft found!"
-        });
-
         ui.label("Fetch Amount");
         let fetch_amount_input = ui.add(DragValue::new(&mut self.config.fetch_amount));
         if fetch_amount_input.lost_focus() || fetch_amount_input.drag_released() {
@@ -100,6 +102,7 @@ impl Jetspotter {
             let fetch_photos_btn = ui.button("Fetch photos");
             if fetch_photos_btn.clicked() {
                 self.state = AppState::Fetching;
+                self.aircraft.clear();
             }
 
             ui.label("This may take a while.");
