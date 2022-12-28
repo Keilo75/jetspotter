@@ -1,8 +1,11 @@
-use eframe::{egui, egui::CentralPanel, egui::Visuals};
+use eframe::{
+    egui,
+    egui::Visuals,
+    egui::{CentralPanel, ProgressBar},
+};
 
-mod aircraft;
 mod jetspotter;
-use jetspotter::Jetspotter;
+use jetspotter::{AppState, Jetspotter};
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -25,11 +28,15 @@ impl eframe::App for Jetspotter {
 
         self.render_top_panel(ctx);
 
+        let is_fetching = self.state == AppState::Fetching;
+
         CentralPanel::default().show(ctx, |ui| {
             ui.columns(2, |cols| {
                 for (i, col) in cols.iter_mut().enumerate() {
+                    col.set_enabled(!is_fetching);
+
                     col.group(|ui| {
-                        if i == 0 && self.aircraft.is_none() {
+                        if i == 0 && (self.aircraft.is_none()) {
                             ui.set_enabled(false);
                         }
 
@@ -41,6 +48,15 @@ impl eframe::App for Jetspotter {
                     });
                 }
             });
+
+            if is_fetching {
+                ui.horizontal(|ui| {
+                    ui.spinner();
+                    ui.label("Fetching photos...")
+                });
+
+                ui.add(ProgressBar::new(0.5).text("50/100"));
+            }
         });
     }
 }

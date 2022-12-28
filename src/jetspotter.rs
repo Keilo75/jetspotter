@@ -1,4 +1,3 @@
-use crate::aircraft::Aircraft;
 use eframe::egui::{self, DragValue, Ui};
 use eframe::egui::{Context, TopBottomPanel};
 use serde::{Deserialize, Serialize};
@@ -35,9 +34,16 @@ impl Default for JetspotterConfig {
     }
 }
 
+#[derive(PartialEq, Debug)]
+pub enum AppState {
+    Menu,
+    Fetching,
+}
+
 pub struct Jetspotter {
     pub config: JetspotterConfig,
-    pub aircraft: Option<Vec<Aircraft>>,
+    pub aircraft: Option<Vec<()>>,
+    pub state: AppState,
 }
 
 impl Jetspotter {
@@ -45,6 +51,7 @@ impl Jetspotter {
         Jetspotter {
             config: JetspotterConfig::load(),
             aircraft: None,
+            state: AppState::Menu,
         }
     }
 
@@ -88,12 +95,11 @@ impl Jetspotter {
             self.config.save();
         }
         ui.horizontal(|ui| {
-            let is_enabled = self.config.fetch_amount >= 0;
-            ui.set_enabled(is_enabled);
+            ui.set_enabled(self.config.fetch_amount >= 0);
 
             let fetch_photos_btn = ui.button("Fetch photos");
             if fetch_photos_btn.clicked() {
-                println!("hi");
+                self.state = AppState::Fetching;
             }
 
             ui.label("This may take a while.");
