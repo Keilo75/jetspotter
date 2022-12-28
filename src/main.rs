@@ -65,20 +65,13 @@ impl eframe::App for Jetspotter {
             CentralPanel::default().show(ctx, |ui| {
                 if let Some(promise) = &self.promise {
                     if let Some(result) = promise.ready() {
-                        match result {
-                            Ok(photos) => {
-                                let mut photos = photos.clone();
-                                self.aircraft.append(&mut photos);
-                                self.promise = None;
-                                self.page += 1;
+                        let mut photos = result.clone();
+                        self.aircraft.append(&mut photos);
+                        self.promise = None;
+                        self.page += 1;
 
-                                if self.aircraft.len() as i32 == self.config.fetch_amount {
-                                    self.state = AppState::Menu;
-                                }
-                            }
-                            Err(error) => {
-                                panic!("Could not fetch: {}", error)
-                            }
+                        if self.aircraft.len() as i32 == self.config.fetch_amount {
+                            self.state = AppState::Menu;
                         }
                     }
 

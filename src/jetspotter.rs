@@ -47,7 +47,7 @@ pub struct Jetspotter {
     pub config: JetspotterConfig,
     pub aircraft: Vec<AircraftPhoto>,
     pub state: AppState,
-    pub promise: Option<Promise<ehttp::Result<Vec<AircraftPhoto>>>>,
+    pub promise: Option<Promise<Vec<AircraftPhoto>>>,
     pub page: i32,
 }
 
