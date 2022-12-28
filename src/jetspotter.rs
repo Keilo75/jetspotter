@@ -1,14 +1,35 @@
 use eframe::egui;
 use eframe::egui::{Context, TopBottomPanel};
 use eframe::Frame;
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
+#[derive(Serialize, Deserialize)]
 pub struct JetspotterConfig {
     pub dark_mode: bool,
+    pub photo_dir: PathBuf,
+}
+
+impl JetspotterConfig {
+    fn set_dark_mode(&mut self, dark_mode: bool) {
+        self.dark_mode = dark_mode;
+        self.save();
+    }
+
+    fn save(&mut self) {
+        confy::store("jetspotter", None, self).unwrap();
+    }
 }
 
 impl Default for JetspotterConfig {
     fn default() -> Self {
-        Self { dark_mode: true }
+        let config_path = confy::get_configuration_file_path("jetspotter", None).unwrap();
+        let photo_dir = config_path.parent().unwrap().join("photos");
+
+        Self {
+            dark_mode: true,
+            photo_dir,
+        }
     }
 }
 
@@ -18,9 +39,8 @@ pub struct Jetspotter {
 
 impl Jetspotter {
     pub fn new() -> Self {
-        Jetspotter {
-            config: Default::default(),
-        }
+        let config: JetspotterConfig = confy::load("jetspotter", None).unwrap_or_default();
+        Jetspotter { config }
     }
 
     pub fn name(&self) -> String {
@@ -43,7 +63,7 @@ impl Jetspotter {
                     });
 
                     if theme_btn.clicked() {
-                        self.config.dark_mode = !self.config.dark_mode;
+                        self.config.set_dark_mode(!self.config.dark_mode);
                     }
                 });
             });
