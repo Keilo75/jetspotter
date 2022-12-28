@@ -54,10 +54,12 @@ impl eframe::App for Jetspotter {
         if self.state == AppState::Fetching {
             if self.promise.is_none() {
                 let (sender, promise) = Promise::new();
-
-                let current = self.aircraft.len() as i32;
-                let total = self.config.fetch_amount;
-                jetphotos::fetch_photos(sender, current, total, self.page);
+                jetphotos::fetch_photos(
+                    sender,
+                    self.aircraft.len(),
+                    self.config.fetch_amount,
+                    self.page,
+                );
 
                 self.state = AppState::Fetching;
                 self.promise = Some(promise);
