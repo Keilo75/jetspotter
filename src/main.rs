@@ -26,7 +26,21 @@ impl eframe::App for Jetspotter {
         self.render_top_panel(ctx);
 
         CentralPanel::default().show(ctx, |ui| {
-            ui.heading("whatsup");
+            ui.columns(2, |cols| {
+                for (i, col) in cols.iter_mut().enumerate() {
+                    col.group(|ui| {
+                        if i == 0 && self.aircraft.is_none() {
+                            ui.set_enabled(false);
+                        }
+
+                        match i {
+                            0 => self.render_play_panel(ui),
+                            1 => self.render_fetch_aircraft_panel(ui),
+                            _ => unreachable!(),
+                        };
+                    });
+                }
+            });
         });
     }
 }
