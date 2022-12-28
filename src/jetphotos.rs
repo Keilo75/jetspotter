@@ -1,7 +1,9 @@
-use core::time;
 use std::thread;
+use std::time::{Duration, Instant};
 
 use poll_promise::Sender;
+
+const WAIT_DURATION: Duration = Duration::from_millis(5_000);
 
 #[derive(Clone)]
 #[allow(dead_code)]
@@ -16,14 +18,12 @@ pub fn fetch_photos(
     sender: Sender<ehttp::Result<Vec<AircraftPhoto>>>,
     current: i32,
     total: i32,
-    page: i32,
+    _page: i32,
 ) {
-    let aircraft_left = total - current;
-    dbg!(page, aircraft_left);
+    thread::spawn(move || {
+        let start = Instant::now();
 
-    thread::spawn(|| {
-        thread::sleep(time::Duration::from_secs_f32(0.1));
-
+        let _aircraft_left = total - current;
         let mut vec = Vec::new();
 
         for _ in 0..2 {
@@ -33,6 +33,13 @@ pub fn fetch_photos(
                 kind: "()".to_owned(),
                 reg: "()".to_owned(),
             });
+        }
+
+        let elapsed = start.elapsed();
+        if elapsed < WAIT_DURATION {
+            let time_to_wait = WAIT_DURATION - elapsed;
+
+            thread::sleep(time_to_wait);
         }
 
         sender.send(Ok(vec));
