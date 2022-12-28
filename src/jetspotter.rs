@@ -1,6 +1,5 @@
 use eframe::egui;
 use eframe::egui::{Context, TopBottomPanel};
-use eframe::Frame;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -46,16 +45,13 @@ impl Jetspotter {
     pub fn name(&self) -> String {
         "Jetspotter".into()
     }
-    pub fn render_top_panel(&mut self, ctx: &Context, frame: &mut Frame) {
+    pub fn render_top_panel(&mut self, ctx: &Context) {
         TopBottomPanel::top("top_panel").show(ctx, |ui| {
+            ui.add_space(5.0);
             egui::menu::bar(ui, |ui| {
                 ui.heading(self.name());
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if ui.button("❌").clicked() {
-                        frame.close();
-                    }
-
                     let theme_btn = ui.button(if self.config.dark_mode {
                         "🌞"
                     } else {
@@ -67,6 +63,7 @@ impl Jetspotter {
                     }
                 });
             });
+            ui.add_space(5.0);
         });
     }
 }

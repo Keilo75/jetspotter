@@ -12,7 +12,7 @@ fn main() {
 }
 
 impl eframe::App for Jetspotter {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         ctx.request_repaint();
 
         if self.config.dark_mode {
@@ -21,6 +21,6 @@ impl eframe::App for Jetspotter {
             ctx.set_visuals(Visuals::light());
         }
 
-        self.render_top_panel(ctx, frame);
+        self.render_top_panel(ctx);
     }
 }
