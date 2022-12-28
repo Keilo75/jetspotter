@@ -1,3 +1,4 @@
+use crate::aircraft::Aircraft;
 use eframe::egui;
 use eframe::egui::{Context, TopBottomPanel};
 use serde::{Deserialize, Serialize};
@@ -34,22 +35,23 @@ impl Default for JetspotterConfig {
 
 pub struct Jetspotter {
     pub config: JetspotterConfig,
+    pub aircraft: Option<Vec<Aircraft>>,
 }
 
 impl Jetspotter {
     pub fn new() -> Self {
         let config: JetspotterConfig = confy::load("jetspotter", None).unwrap_or_default();
-        Jetspotter { config }
+        Jetspotter {
+            config,
+            aircraft: None,
+        }
     }
 
-    pub fn name(&self) -> String {
-        "Jetspotter".into()
-    }
     pub fn render_top_panel(&mut self, ctx: &Context) {
         TopBottomPanel::top("top_panel").show(ctx, |ui| {
             ui.add_space(5.0);
             egui::menu::bar(ui, |ui| {
-                ui.heading(self.name());
+                ui.heading("Jetspotter");
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     let theme_btn = ui.button(if self.config.dark_mode {

@@ -1,4 +1,6 @@
-use eframe::{egui, egui::Visuals};
+use eframe::{egui, egui::CentralPanel, egui::Visuals};
+
+mod aircraft;
 mod jetspotter;
 use jetspotter::Jetspotter;
 
@@ -22,5 +24,9 @@ impl eframe::App for Jetspotter {
         }
 
         self.render_top_panel(ctx);
+
+        CentralPanel::default().show(ctx, |ui| {
+            ui.heading("whatsup");
+        });
     }
 }
