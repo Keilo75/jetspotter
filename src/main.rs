@@ -4,6 +4,7 @@ use eframe::{
     egui::{CentralPanel, ProgressBar},
 };
 use poll_promise::Promise;
+use std::fs;
 
 mod jetphotos;
 mod jetspotter;
@@ -71,6 +72,9 @@ impl eframe::App for Jetspotter {
                         self.page += 1;
 
                         if self.aircraft.len() as i32 == self.config.fetch_amount {
+                            let serialized_aircraft =
+                                serde_json::to_string(&self.aircraft).unwrap();
+                            fs::write(&self.config.photo_json, serialized_aircraft).unwrap();
                             self.state = AppState::Menu;
                         }
                     }

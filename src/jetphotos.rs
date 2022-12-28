@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -5,7 +6,7 @@ use poll_promise::Sender;
 
 const WAIT_DURATION: Duration = Duration::from_millis(5_000);
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 #[allow(dead_code)]
 pub struct AircraftPhoto {
     src: String,

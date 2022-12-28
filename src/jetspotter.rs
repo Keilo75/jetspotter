@@ -2,6 +2,7 @@ use eframe::egui::{self, DragValue, Ui};
 use eframe::egui::{Context, TopBottomPanel};
 use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
+use std::fs;
 use std::path::PathBuf;
 
 use crate::jetphotos::AircraftPhoto;
@@ -9,7 +10,7 @@ use crate::jetphotos::AircraftPhoto;
 #[derive(Serialize, Deserialize)]
 pub struct JetspotterConfig {
     pub dark_mode: bool,
-    pub photo_dir: PathBuf,
+    pub photo_json: PathBuf,
     pub fetch_amount: i32,
 }
 
@@ -27,11 +28,11 @@ impl JetspotterConfig {
 impl Default for JetspotterConfig {
     fn default() -> Self {
         let config_path = confy::get_configuration_file_path("jetspotter", None).unwrap();
-        let photo_dir = config_path.parent().unwrap().join("photos");
+        let photo_json = config_path.parent().unwrap().join("photos.json");
 
         Self {
             dark_mode: true,
-            photo_dir,
+            photo_json,
             fetch_amount: 100,
         }
     }
@@ -106,6 +107,10 @@ impl Jetspotter {
                 self.state = AppState::Fetching;
                 self.aircraft.clear();
                 self.page = 1;
+
+                if self.config.photo_json.exists() {
+                    fs::remove_file(&self.config.photo_json).unwrap();
+                }
             }
 
             ui.label("This may take a while.");
