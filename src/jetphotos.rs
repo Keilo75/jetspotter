@@ -90,6 +90,7 @@ pub fn parse_photo_div(div: ElementRef) -> AircraftPhoto {
 
     let photographer = parse_info(info_items.next());
     let full_kind = parse_info(info_items.next());
+    let kind = parse_kind(&full_kind);
     let registration = parse_info(info_items.next());
     let registration = parse_registration(registration);
     let airline = parse_info(info_items.next());
@@ -98,7 +99,7 @@ pub fn parse_photo_div(div: ElementRef) -> AircraftPhoto {
         id,
         url,
         photographer,
-        kind: AircraftKind::A220,
+        kind,
         full_kind,
         airline,
         registration,
@@ -134,4 +135,71 @@ fn parse_url(div: &ElementRef) -> String {
 
 fn parse_registration(registration: String) -> String {
     registration.split(" ").next().unwrap().to_owned()
+}
+
+fn parse_kind(full_kind: &String) -> AircraftKind {
+    if full_kind.starts_with("Airbus A300") {
+        return AircraftKind::A300;
+    }
+    if full_kind.starts_with("Airbus A310") {
+        return AircraftKind::A310;
+    }
+    if full_kind.starts_with("Airbus A318") {
+        return AircraftKind::A318;
+    }
+    if full_kind.starts_with("Airbus A319") {
+        return AircraftKind::A319;
+    }
+    if full_kind.starts_with("Airbus A320") {
+        return AircraftKind::A320;
+    }
+    if full_kind.starts_with("Airbus A321") {
+        return AircraftKind::A321;
+    }
+    if full_kind.starts_with("Airbus A330") {
+        return AircraftKind::A330;
+    }
+    if full_kind.starts_with("Airbus A340") {
+        return AircraftKind::A340;
+    }
+    if full_kind.starts_with("Airbus A350") {
+        return AircraftKind::A350;
+    }
+    if full_kind.starts_with("Airbus A380") {
+        return AircraftKind::A380;
+    }
+
+    if full_kind.starts_with("Boeing 707") {
+        return AircraftKind::B707;
+    }
+    if full_kind.starts_with("Boeing 717") {
+        return AircraftKind::B717;
+    }
+    if full_kind.starts_with("Boeing 727") {
+        return AircraftKind::B727;
+    }
+    if full_kind.starts_with("Boeing 737") {
+        return AircraftKind::B737;
+    }
+    if full_kind.starts_with("Boeing 747") {
+        return AircraftKind::B747;
+    }
+    if full_kind.starts_with("Boeing 757") {
+        return AircraftKind::B757;
+    }
+    if full_kind.starts_with("Boeing 767") {
+        return AircraftKind::B767;
+    }
+    if full_kind.starts_with("Boeing 777") {
+        return AircraftKind::B777;
+    }
+    if full_kind.starts_with("Boeing 787") {
+        return AircraftKind::B787;
+    }
+
+    if full_kind.starts_with("Bombardier CSeries") {
+        return AircraftKind::A220;
+    }
+
+    panic!("Could not match {}", full_kind)
 }
