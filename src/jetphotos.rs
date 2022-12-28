@@ -7,7 +7,7 @@ use poll_promise::Sender;
 
 const WAIT_DURATION: Duration = Duration::from_millis(5_000);
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum AircraftKind {
     A220,
     A300,
@@ -31,7 +31,7 @@ pub enum AircraftKind {
     B787,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct AircraftPhoto {
     id: String,
     url: String,
@@ -83,6 +83,42 @@ pub fn parse_response(response: String, aircraft_left: usize) -> Vec<AircraftPho
 pub fn parse_photo_div(div: ElementRef) -> AircraftPhoto {
     let id = div.value().attr("data-photo").unwrap().to_owned();
 
+    let url = parse_url(&div);
+
+    let info_selector = Selector::parse(".mobile-only .result__infoListText").unwrap();
+    let mut info_items = div.select(&info_selector);
+
+    let photographer = parse_info(info_items.next());
+    let full_kind = parse_info(info_items.next());
+    let registration = parse_info(info_items.next());
+    let registration = parse_registration(registration);
+    let airline = parse_info(info_items.next());
+
+    let photo = AircraftPhoto {
+        id,
+        url,
+        photographer,
+        kind: AircraftKind::A220,
+        full_kind,
+        airline,
+        registration,
+    };
+
+    dbg!(&photo);
+
+    photo
+}
+
+fn parse_info(element: Option<ElementRef>) -> String {
+    element
+        .unwrap()
+        .text()
+        .collect::<String>()
+        .trim()
+        .to_owned()
+}
+
+fn parse_url(div: &ElementRef) -> String {
     let small_photo_selector = Selector::parse("img.result__photo").unwrap();
     let small_photo_url = div
         .select(&small_photo_selector)
@@ -93,14 +129,9 @@ pub fn parse_photo_div(div: ElementRef) -> AircraftPhoto {
         .unwrap();
 
     let url = small_photo_url.replace("//", "").replace("/400/", "/full/");
+    url
+}
 
-    AircraftPhoto {
-        id,
-        url,
-        photographer: "".to_string(),
-        kind: AircraftKind::A220,
-        full_kind: "".to_string(),
-        airline: "".to_string(),
-        registration: "".to_string(),
-    }
+fn parse_registration(registration: String) -> String {
+    registration.split(" ").next().unwrap().to_owned()
 }
