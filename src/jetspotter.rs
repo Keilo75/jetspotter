@@ -54,9 +54,19 @@ pub struct Jetspotter {
 
 impl Jetspotter {
     pub fn new() -> Self {
+        let config = JetspotterConfig::load();
+        let aircraft = if config.photo_json.exists() {
+            let str = fs::read_to_string(&config.photo_json).unwrap();
+            let vec = serde_json::from_str(&str).unwrap();
+
+            vec
+        } else {
+            Vec::new()
+        };
+
         Jetspotter {
             config: JetspotterConfig::load(),
-            aircraft: Vec::new(),
+            aircraft,
             state: AppState::Menu,
             promise: None,
             page: 1,
@@ -88,6 +98,7 @@ impl Jetspotter {
 
     pub fn render_play_panel(&mut self, ui: &mut Ui) {
         ui.heading("Play");
+        ui.label(format!("{} aircraft cached.", self.aircraft.len()));
         if ui.button("Play").clicked() {
             println!("Playing");
         }
