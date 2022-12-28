@@ -48,6 +48,7 @@ pub struct Jetspotter {
     pub aircraft: Vec<AircraftPhoto>,
     pub state: AppState,
     pub promise: Option<Promise<ehttp::Result<Vec<AircraftPhoto>>>>,
+    pub page: i32,
 }
 
 impl Jetspotter {
@@ -57,6 +58,7 @@ impl Jetspotter {
             aircraft: Vec::new(),
             state: AppState::Menu,
             promise: None,
+            page: 1,
         }
     }
 
@@ -103,6 +105,7 @@ impl Jetspotter {
             if fetch_photos_btn.clicked() {
                 self.state = AppState::Fetching;
                 self.aircraft.clear();
+                self.page = 1;
             }
 
             ui.label("This may take a while.");

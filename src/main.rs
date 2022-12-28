@@ -56,7 +56,7 @@ impl eframe::App for Jetspotter {
 
                 let current = self.aircraft.len() as i32;
                 let total = self.config.fetch_amount;
-                jetphotos::fetch_photos(sender, current, total, 0);
+                jetphotos::fetch_photos(sender, current, total, self.page);
 
                 self.state = AppState::Fetching;
                 self.promise = Some(promise);
@@ -70,6 +70,7 @@ impl eframe::App for Jetspotter {
                                 let mut photos = photos.clone();
                                 self.aircraft.append(&mut photos);
                                 self.promise = None;
+                                self.page += 1;
 
                                 if self.aircraft.len() as i32 == self.config.fetch_amount {
                                     self.state = AppState::Menu;

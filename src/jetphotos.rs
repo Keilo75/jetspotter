@@ -19,7 +19,7 @@ pub fn fetch_photos(
     page: i32,
 ) {
     let aircraft_left = total - current;
-    dbg!(aircraft_left);
+    dbg!(page, aircraft_left);
 
     thread::spawn(|| {
         thread::sleep(time::Duration::from_secs_f32(0.1));
