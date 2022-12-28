@@ -12,15 +12,29 @@ pub struct AircraftPhoto {
     reg: String,
 }
 
-pub fn fetch_photos(sender: Sender<ehttp::Result<AircraftPhoto>>) {
+pub fn fetch_photos(
+    sender: Sender<ehttp::Result<Vec<AircraftPhoto>>>,
+    current: i32,
+    total: i32,
+    page: i32,
+) {
+    let aircraft_left = total - current;
+    dbg!(aircraft_left);
+
     thread::spawn(|| {
         thread::sleep(time::Duration::from_secs_f32(0.1));
 
-        sender.send(Ok(AircraftPhoto {
-            src: "()".to_owned(),
-            photographer: "()".to_owned(),
-            kind: "()".to_owned(),
-            reg: "()".to_owned(),
-        }));
+        let mut vec = Vec::new();
+
+        for _ in 0..2 {
+            vec.push(AircraftPhoto {
+                src: "()".to_owned(),
+                photographer: "()".to_owned(),
+                kind: "()".to_owned(),
+                reg: "()".to_owned(),
+            });
+        }
+
+        sender.send(Ok(vec));
     });
 }
