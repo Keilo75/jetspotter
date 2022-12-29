@@ -57,7 +57,10 @@ impl eframe::App for Jetspotter {
                 });
 
                 ui.add_space(10.0);
-                self.views.statistics_panel.ui(ui, &mut self.state);
+
+                if self.state.persistent.results.games_played != 0 {
+                    self.views.statistics_panel.ui(ui, &mut self.state);
+                }
             });
         }
 

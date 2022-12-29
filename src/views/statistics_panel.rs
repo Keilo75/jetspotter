@@ -37,7 +37,7 @@ impl super::View for StatisticsView {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
         ui.horizontal(|ui| {
             ui.horizontal(|ui| {
-                ui.label(RichText::new("Aircraft Statistics").heading().strong());
+                ui.label(RichText::new("Statistics").heading().strong());
 
                 ui.add(stats(
                     state.persistent.results.games_played,
