@@ -30,11 +30,8 @@ pub enum AircraftKind {
 pub struct AircraftPhoto {
     pub id: String,
     pub url: String,
-    pub photographer: String,
     pub kind: AircraftKind,
     pub full_kind: String,
-    pub registration: String,
-    pub airline: String,
 }
 
 impl AircraftPhoto {
@@ -46,21 +43,15 @@ impl AircraftPhoto {
         let info_selector = Selector::parse(".mobile-only .result__infoListText").unwrap();
         let mut info_items = div.select(&info_selector);
 
-        let photographer = parse_info(info_items.next());
+        info_items.next();
         let full_kind = parse_info(info_items.next());
         let kind = parse_kind(&full_kind);
-        let registration = parse_info(info_items.next());
-        let registration = parse_registration(registration);
-        let airline = parse_info(info_items.next());
 
         let photo = AircraftPhoto {
             id,
             url,
-            photographer,
             kind,
             full_kind,
-            airline,
-            registration,
         };
 
         photo
@@ -90,10 +81,6 @@ fn parse_url(div: &ElementRef) -> String {
         .replace("//", "http://")
         .replace("/400/", "/full/");
     url
-}
-
-fn parse_registration(registration: String) -> String {
-    registration.split(" ").next().unwrap().to_owned()
 }
 
 fn parse_kind(full_kind: &String) -> AircraftKind {

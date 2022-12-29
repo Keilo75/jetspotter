@@ -1,8 +1,12 @@
 use egui_extras::RetainedImage;
 use poll_promise::Promise;
+use strum::IntoEnumIterator;
 
 use crate::{
-    jetphotos::{self, aircraft_photo::AircraftPhoto},
+    jetphotos::{
+        self,
+        aircraft_photo::{AircraftKind, AircraftPhoto},
+    },
     jetspotter::AppState,
 };
 
@@ -44,7 +48,7 @@ impl super::View<GameResult> for Game {
                 let size = image.size_vec2();
                 let available_size = ui.available_size();
                 let max_width = available_size.x;
-                let max_height = available_size.y / 2.0;
+                let max_height = available_size.y / 1.5;
 
                 let mut img_size = size * (max_width / size.x);
                 if img_size.y > max_height {
@@ -52,7 +56,18 @@ impl super::View<GameResult> for Game {
                 }
 
                 ui.vertical_centered(|ui| {
+                    ui.set_max_width(img_size.x.clone());
                     image.show_size(ui, img_size);
+                    ui.add_space(5.0);
+
+                    ui.horizontal_wrapped(|ui| {
+                        for kind in AircraftKind::iter() {
+                            ui.button(kind.to_string());
+                        }
+                    });
+
+                    ui.separator();
+                    ui.button("Exit");
                 });
             } else {
                 ui.horizontal(|ui| {
