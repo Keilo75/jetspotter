@@ -7,6 +7,7 @@ use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 
 use crate::jetphotos::{AircraftKind, AircraftPhoto};
+use crate::views::{View, Views};
 
 #[derive(Serialize, Deserialize)]
 pub struct PersistentData {
@@ -57,16 +58,16 @@ impl Default for PersistentData {
 
 #[derive(Serialize, Deserialize)]
 pub struct Results {
-    games_played: i32,
-    games_won: i32,
-    aircraft_results: HashMap<String, AircraftResult>,
+    pub games_played: i32,
+    pub games_won: i32,
+    pub aircraft_results: HashMap<String, AircraftResult>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct AircraftResult {
-    games_played: i32,
-    games_won: i32,
-    misses: HashMap<String, i32>,
+    pub games_played: i32,
+    pub games_won: i32,
+    pub misses: HashMap<String, i32>,
 }
 
 #[derive(PartialEq, Debug)]
@@ -80,8 +81,8 @@ pub struct Jetspotter {
     pub state: AppState,
     pub promise: Option<Promise<Vec<AircraftPhoto>>>,
     pub page: i32,
+    pub views: Views,
 }
-
 impl Jetspotter {
     pub fn new() -> Self {
         let persistent = PersistentData::load();
@@ -91,6 +92,7 @@ impl Jetspotter {
             state: AppState::Menu,
             promise: None,
             page: 1,
+            views: Default::default(),
         }
     }
 
@@ -152,27 +154,6 @@ impl Jetspotter {
     }
 
     pub fn render_statistics_panel(&mut self, ui: &mut Ui) {
-        ui.heading("Statistics");
-
-        ui.horizontal(|ui| {
-            let Results {
-                games_played,
-                games_won,
-                ..
-            } = self.persistent.results;
-
-            let win_rate = if games_played == 0 {
-                0.0
-            } else {
-                games_won as f32 / games_played as f32
-            };
-
-            ui.label(format!(
-                "Games played: {} | Games won: {} | Win rate: {}%",
-                games_played, games_won, win_rate
-            ));
-        });
-
-        ui.separator();
+        self.views.statistics.ui(&mut self.persistent, ui);
     }
 }

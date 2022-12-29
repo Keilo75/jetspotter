@@ -7,6 +7,7 @@ use poll_promise::Promise;
 
 mod jetphotos;
 mod jetspotter;
+mod views;
 use jetspotter::{AppState, Jetspotter};
 
 fn main() {
