@@ -1,3 +1,4 @@
+use eframe::{egui::Layout, emath::Align, epaint::Color32};
 use egui_extras::RetainedImage;
 use poll_promise::Promise;
 use strum::IntoEnumIterator;
@@ -13,6 +14,7 @@ use crate::{
 pub struct Game {
     photo: Option<AircraftPhoto>,
     promise: Option<Promise<RetainedImage>>,
+    guess: Option<AircraftKind>,
 }
 
 impl Default for Game {
@@ -20,6 +22,7 @@ impl Default for Game {
         Self {
             photo: None,
             promise: None,
+            guess: None,
         }
     }
 }
@@ -28,12 +31,14 @@ impl Default for Game {
 pub enum GameResult {
     None,
     Exit,
+    NextPhoto,
 }
 
 impl Game {
     pub fn start_game(&mut self) {
         self.photo = None;
         self.promise = None;
+        self.guess = None;
     }
 }
 
@@ -68,15 +73,40 @@ impl super::View<GameResult> for Game {
                     image.show_size(ui, img_size);
                     ui.add_space(5.0);
 
-                    ui.horizontal_wrapped(|ui| {
-                        for kind in AircraftKind::iter() {
-                            ui.button(kind.to_string());
-                        }
-                    });
+                    if let Some(guess) = &self.guess {
+                        ui.label(format!("You guessed: {}", guess.to_string()));
 
-                    ui.separator();
-                    if ui.button("Exit").clicked() {
-                        result = GameResult::Exit;
+                        let is_correct_guess = guess == &photo.kind;
+                        if is_correct_guess {
+                            ui.colored_label(Color32::LIGHT_GREEN, "That's correct!");
+                        } else {
+                            ui.colored_label(
+                                Color32::LIGHT_RED,
+                                format!("That's incorrect. The correct answer is {}.", &photo.kind),
+                            );
+                        }
+                    } else {
+                        ui.horizontal_wrapped(|ui| {
+                            for kind in AircraftKind::iter() {
+                                if ui.button(kind.to_string()).clicked() {
+                                    self.guess = Some(kind);
+                                }
+                            }
+                        });
+                    }
+
+                    if self.guess.is_some() {
+                        ui.separator();
+
+                        ui.with_layout(Layout::right_to_left(Align::TOP), |ui| {
+                            if ui.button("Exit").clicked() {
+                                result = GameResult::Exit;
+                            }
+
+                            if ui.button("Next photo").clicked() {
+                                result = GameResult::NextPhoto;
+                            }
+                        });
                     }
                 });
             } else {

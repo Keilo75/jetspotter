@@ -81,6 +81,10 @@ impl eframe::App for Jetspotter {
                 if game_result == GameResult::Exit {
                     self.state.app_panel = AppPanel::Menu;
                 }
+
+                if game_result == GameResult::NextPhoto {
+                    self.views.game.start_game();
+                }
             });
         }
     }
