@@ -153,5 +153,26 @@ impl Jetspotter {
 
     pub fn render_statistics_panel(&mut self, ui: &mut Ui) {
         ui.heading("Statistics");
+
+        ui.horizontal(|ui| {
+            let Results {
+                games_played,
+                games_won,
+                ..
+            } = self.persistent.results;
+
+            let win_rate = if games_played == 0 {
+                0.0
+            } else {
+                games_won as f32 / games_played as f32
+            };
+
+            ui.label(format!(
+                "Games played: {} | Games won: {} | Win rate: {}%",
+                games_played, games_won, win_rate
+            ));
+        });
+
+        ui.separator();
     }
 }
