@@ -4,7 +4,6 @@ use eframe::{
     egui::{CentralPanel, ProgressBar},
 };
 use poll_promise::Promise;
-use std::fs;
 
 mod jetphotos;
 mod jetspotter;
@@ -23,7 +22,7 @@ impl eframe::App for Jetspotter {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         ctx.request_repaint();
 
-        if self.config.dark_mode {
+        if self.persistent.dark_mode {
             ctx.set_visuals(Visuals::dark());
         } else {
             ctx.set_visuals(Visuals::light());
@@ -37,7 +36,7 @@ impl eframe::App for Jetspotter {
             ui.columns(2, |cols| {
                 for (i, col) in cols.iter_mut().enumerate() {
                     col.group(|ui| {
-                        if i == 0 && self.aircraft.len() == 0 {
+                        if i == 0 && self.persistent.aircraft.len() == 0 {
                             ui.set_enabled(false);
                         }
 
@@ -61,8 +60,8 @@ impl eframe::App for Jetspotter {
                 let (sender, promise) = Promise::new();
                 jetphotos::fetch_photos(
                     sender,
-                    self.aircraft.len(),
-                    self.config.fetch_amount,
+                    self.persistent.aircraft.len(),
+                    self.persistent.fetch_amount,
                     self.page,
                 );
 
@@ -74,14 +73,12 @@ impl eframe::App for Jetspotter {
                 if let Some(promise) = &self.promise {
                     if let Some(result) = promise.ready() {
                         let mut photos = result.clone();
-                        self.aircraft.append(&mut photos);
+                        self.persistent.aircraft.append(&mut photos);
                         self.promise = None;
                         self.page += 1;
 
-                        if self.aircraft.len() as i32 == self.config.fetch_amount {
-                            let serialized_aircraft =
-                                serde_json::to_string(&self.aircraft).unwrap();
-                            fs::write(&self.config.photo_json, serialized_aircraft).unwrap();
+                        if self.persistent.aircraft.len() as i32 == self.persistent.fetch_amount {
+                            self.persistent.save();
                             self.state = AppState::Menu;
                         }
                     }
@@ -90,12 +87,13 @@ impl eframe::App for Jetspotter {
                         ui.spinner();
                         ui.label("Fetching photos...")
                     });
-                    let progress = self.aircraft.len() as f32 / self.config.fetch_amount as f32;
+                    let progress =
+                        self.persistent.aircraft.len() as f32 / self.persistent.fetch_amount as f32;
 
                     ui.add(ProgressBar::new(progress).text(format!(
                         "{}/{}",
-                        self.aircraft.len(),
-                        self.config.fetch_amount
+                        self.persistent.aircraft.len(),
+                        self.persistent.fetch_amount
                     )));
                 }
             });
