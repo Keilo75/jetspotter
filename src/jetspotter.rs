@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
-use eframe::egui::{DragValue, Ui};
 use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 
@@ -93,27 +92,5 @@ impl Jetspotter {
             page: 1,
             views: Default::default(),
         }
-    }
-
-    pub fn render_fetch_aircraft_panel(&mut self, ui: &mut Ui) {
-        ui.label("Fetch Amount");
-        let fetch_amount_input = ui.add(DragValue::new(&mut self.persistent.fetch_amount));
-        if fetch_amount_input.lost_focus() || fetch_amount_input.drag_released() {
-            self.persistent.save();
-        }
-        ui.horizontal(|ui| {
-            ui.set_enabled(self.persistent.fetch_amount >= 0);
-
-            let fetch_photos_btn = ui.button("Fetch photos");
-            if fetch_photos_btn.clicked() {
-                self.state = AppState::Fetching;
-                self.page = 1;
-
-                self.persistent.aircraft.clear();
-                self.persistent.save();
-            }
-
-            ui.label("This may take a while.");
-        });
     }
 }

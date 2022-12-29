@@ -45,8 +45,8 @@ impl eframe::App for Jetspotter {
                         }
 
                         match i {
-                            0 => self.views.play.ui(&mut self.persistent, ui),
-                            1 => self.render_fetch_aircraft_panel(ui),
+                            0 => self.views.play_panel.ui(&mut self.persistent, ui),
+                            1 => self.views.fetch_panel.ui(&mut self.persistent, ui),
                             _ => unreachable!(),
                         };
                     });
@@ -54,7 +54,7 @@ impl eframe::App for Jetspotter {
             });
 
             ui.add_space(10.0);
-            ui.group(|ui| self.views.statistics.ui(&mut self.persistent, ui));
+            ui.group(|ui| self.views.statistics_panel.ui(&mut self.persistent, ui));
         });
 
         if self.state == AppState::Fetching {
