@@ -86,7 +86,9 @@ fn parse_url(div: &ElementRef) -> String {
         .attr("src")
         .unwrap();
 
-    let url = small_photo_url.replace("//", "").replace("/400/", "/full/");
+    let url = small_photo_url
+        .replace("//", "http://")
+        .replace("/400/", "/full/");
     url
 }
 

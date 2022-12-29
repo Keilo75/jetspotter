@@ -2,6 +2,7 @@ use crate::jetspotter::AppState;
 
 pub mod fetch_overlay;
 pub mod fetch_panel;
+pub mod game;
 pub mod play_panel;
 pub mod statistics_panel;
 pub mod top_panel;
@@ -12,6 +13,7 @@ pub struct Views {
     pub top_panel: top_panel::TopPanel,
     pub fetch_panel: fetch_panel::FetchPanel,
     pub fetch_overlay: fetch_overlay::FetchOverlay,
+    pub game: game::Game,
 }
 
 impl Default for Views {
@@ -22,6 +24,7 @@ impl Default for Views {
             top_panel: top_panel::TopPanel::default(),
             fetch_panel: fetch_panel::FetchPanel::default(),
             fetch_overlay: fetch_overlay::FetchOverlay::default(),
+            game: game::Game::default(),
         }
     }
 }

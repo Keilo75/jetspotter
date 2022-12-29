@@ -8,7 +8,7 @@ mod jetphotos;
 mod jetspotter;
 mod views;
 use jetspotter::{AppPanel, Jetspotter};
-use views::{fetch_panel::FetchPanelResult, View};
+use views::{fetch_panel::FetchPanelResult, play_panel::PlayPanelResult, View};
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -41,7 +41,11 @@ impl eframe::App for Jetspotter {
                         if self.state.persistent.aircraft.len() == 0 {
                             ui.set_enabled(false);
                         }
-                        self.views.play_panel.ui(ui, &mut self.state);
+
+                        let play_panel_result = self.views.play_panel.ui(ui, &mut self.state);
+                        if play_panel_result == PlayPanelResult::StartGame {
+                            self.state.app_panel = AppPanel::Game;
+                        }
                     });
 
                     cols[1].group(|ui| {
@@ -67,6 +71,12 @@ impl eframe::App for Jetspotter {
         if self.state.app_panel == AppPanel::Fetching {
             CentralPanel::default().show(ctx, |ui| {
                 self.views.fetch_overlay.ui(ui, &mut self.state);
+            });
+        }
+
+        if self.state.app_panel == AppPanel::Game {
+            CentralPanel::default().show(ctx, |ui| {
+                self.views.game.ui(ui, &mut self.state);
             });
         }
     }

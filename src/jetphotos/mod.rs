@@ -1,6 +1,7 @@
 use std::thread;
 use std::time::{Duration, Instant};
 
+use egui_extras::RetainedImage;
 use poll_promise::Sender;
 use scraper::{Html, Selector};
 
@@ -25,6 +26,14 @@ pub fn fetch_photos(sender: Sender<Vec<AircraftPhoto>>, current: usize, total: i
         }
 
         sender.send(vec);
+    });
+}
+
+pub fn fetch_photo(sender: Sender<RetainedImage>, url: String) {
+    let request = ehttp::Request::get(&url);
+    ehttp::fetch(request, move |response| {
+        let image = RetainedImage::from_image_bytes(&url, &response.unwrap().bytes).unwrap();
+        sender.send(image);
     });
 }
 

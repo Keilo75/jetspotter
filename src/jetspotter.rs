@@ -75,6 +75,7 @@ pub struct AircraftResult {
 pub enum AppPanel {
     Menu,
     Fetching,
+    Game,
 }
 
 pub struct AppState {
