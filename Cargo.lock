@@ -102,6 +102,7 @@ version = "0.1.0"
 dependencies = [
  "confy",
  "eframe",
+ "lazy_static",
  "poll-promise",
  "reqwest",
  "scraper",

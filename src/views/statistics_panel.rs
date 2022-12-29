@@ -1,4 +1,4 @@
-use crate::jetspotter::{PersistentData, Results};
+use crate::jetspotter::{AppState, Results};
 
 pub struct StatisticsView;
 
@@ -9,7 +9,7 @@ impl Default for StatisticsView {
 }
 
 impl super::View for StatisticsView {
-    fn ui(&mut self, persistent: &mut PersistentData, ui: &mut eframe::egui::Ui) {
+    fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
         ui.heading("Statistics");
 
         ui.horizontal(|ui| {
@@ -17,7 +17,7 @@ impl super::View for StatisticsView {
                 games_played,
                 games_won,
                 ..
-            } = persistent.results;
+            } = state.persistent.results;
 
             let win_rate = if games_played == 0 {
                 0.0

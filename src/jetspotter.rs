@@ -4,8 +4,10 @@ use strum::IntoEnumIterator;
 use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 
-use crate::jetphotos::{AircraftKind, AircraftPhoto};
-use crate::views::Views;
+use crate::{
+    jetphotos::{AircraftKind, AircraftPhoto},
+    views::Views,
+};
 
 #[derive(Serialize, Deserialize)]
 pub struct PersistentData {
@@ -69,25 +71,36 @@ pub struct AircraftResult {
 }
 
 #[derive(PartialEq, Debug)]
-pub enum AppState {
+pub enum AppPanel {
     Menu,
     Fetching,
 }
 
-pub struct Jetspotter {
+pub struct AppState {
+    pub app_panel: AppPanel,
     pub persistent: PersistentData,
+}
+
+impl Default for AppState {
+    fn default() -> Self {
+        AppState {
+            app_panel: AppPanel::Menu,
+            persistent: PersistentData::load(),
+        }
+    }
+}
+
+pub struct Jetspotter {
     pub state: AppState,
     pub promise: Option<Promise<Vec<AircraftPhoto>>>,
     pub page: i32,
     pub views: Views,
 }
+
 impl Jetspotter {
     pub fn new() -> Self {
-        let persistent = PersistentData::load();
-
         Jetspotter {
-            persistent,
-            state: AppState::Menu,
+            state: Default::default(),
             promise: None,
             page: 1,
             views: Default::default(),

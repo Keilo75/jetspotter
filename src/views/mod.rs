@@ -1,4 +1,4 @@
-use crate::jetspotter::PersistentData;
+use crate::jetspotter::AppState;
 
 pub mod fetch_panel;
 pub mod play_panel;
@@ -24,5 +24,5 @@ impl Default for Views {
 }
 
 pub trait View {
-    fn ui(&mut self, persistent: &mut PersistentData, ui: &mut eframe::egui::Ui);
+    fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState);
 }
