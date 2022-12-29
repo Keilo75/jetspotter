@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
-use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -92,8 +91,7 @@ impl Default for AppState {
 
 pub struct Jetspotter {
     pub state: AppState,
-    pub promise: Option<Promise<Vec<AircraftPhoto>>>,
-    pub page: i32,
+
     pub views: Views,
 }
 
@@ -101,8 +99,7 @@ impl Jetspotter {
     pub fn new() -> Self {
         Jetspotter {
             state: Default::default(),
-            promise: None,
-            page: 1,
+
             views: Default::default(),
         }
     }

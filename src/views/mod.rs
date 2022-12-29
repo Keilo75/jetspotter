@@ -1,5 +1,6 @@
 use crate::jetspotter::AppState;
 
+pub mod fetch_overlay;
 pub mod fetch_panel;
 pub mod play_panel;
 pub mod statistics_panel;
@@ -10,6 +11,7 @@ pub struct Views {
     pub play_panel: play_panel::PlayView,
     pub top_panel: top_panel::TopPanelView,
     pub fetch_panel: fetch_panel::FetchPanel,
+    pub fetch_overlay: fetch_overlay::FetchOverlay,
 }
 
 impl Default for Views {
@@ -19,10 +21,11 @@ impl Default for Views {
             play_panel: play_panel::PlayView::default(),
             top_panel: top_panel::TopPanelView::default(),
             fetch_panel: fetch_panel::FetchPanel::default(),
+            fetch_overlay: fetch_overlay::FetchOverlay::default(),
         }
     }
 }
 
-pub trait View {
-    fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState);
+pub trait View<T = ()> {
+    fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) -> T;
 }

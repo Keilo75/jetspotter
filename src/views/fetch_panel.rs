@@ -2,7 +2,7 @@ use eframe::egui::DragValue;
 
 use crate::jetspotter::AppState;
 
-pub struct FetchPanel {}
+pub struct FetchPanel;
 
 impl Default for FetchPanel {
     fn default() -> Self {
@@ -10,8 +10,16 @@ impl Default for FetchPanel {
     }
 }
 
-impl super::View for FetchPanel {
-    fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
+#[derive(PartialEq)]
+pub enum FetchPanelResult {
+    None,
+    StartFetch,
+}
+
+impl super::View<FetchPanelResult> for FetchPanel {
+    fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) -> FetchPanelResult {
+        let mut result = FetchPanelResult::None;
+
         ui.label("Fetch Amount");
         let fetch_amount_input = ui.add(DragValue::new(&mut state.persistent.fetch_amount));
         if fetch_amount_input.lost_focus() || fetch_amount_input.drag_released() {
@@ -23,14 +31,12 @@ impl super::View for FetchPanel {
 
             let fetch_photos_btn = ui.button("Fetch photos");
             if fetch_photos_btn.clicked() {
-                // self.state = AppState::Fetching;
-                // self.page = 1;
-
-                state.persistent.aircraft.clear();
-                state.persistent.save();
+                result = FetchPanelResult::StartFetch;
             }
 
             ui.label("This may take a while.");
         });
+
+        return result;
     }
 }
