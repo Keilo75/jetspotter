@@ -71,7 +71,7 @@ impl super::View for StatisticsView {
         });
 
         let sorted_results = sort_results(
-            &state.persistent.results.aircraft_results,
+            &mut state.persistent.results.aircraft_results,
             &self.sort,
             &self.sort_direction,
         );
@@ -92,14 +92,23 @@ impl super::View for StatisticsView {
 }
 
 fn sort_results<'a>(
-    results: &'a Vec<Box<AircraftResult>>,
+    results: &'a mut Vec<Box<AircraftResult>>,
     sort: &Sort,
     sort_direction: &SortDirection,
 ) -> Box<dyn Iterator<Item = &'a Box<AircraftResult>> + 'a> {
     let sorted = match sort {
-        Sort::Name => results,
-        Sort::AmountGames => results,
-        Sort::WinRate => results,
+        Sort::Name => {
+            results.sort_by_key(|k| k.aircraft.to_string());
+            results
+        }
+        Sort::AmountGames => {
+            results.sort_by_key(|k| k.games_played);
+            results
+        }
+        Sort::WinRate => {
+            results.sort_by_key(|k| calculate_win_rate(k.games_played, k.games_won));
+            results
+        }
     }
     .iter();
 
@@ -112,14 +121,18 @@ fn sort_results<'a>(
 
 pub fn stats(games_played: i32, games_won: i32) -> Label {
     let win_rate = if games_played == 0 {
-        0.0
+        0
     } else {
-        let win_rate = games_won as f32 / games_played as f32;
-        (win_rate * 100.0).round()
+        calculate_win_rate(games_played, games_won)
     };
 
     Label::new(format!(
         "Games played: {} | Games won: {} | Win rate: {}%",
         games_played, games_won, win_rate
     ))
+}
+
+pub fn calculate_win_rate(games_played: i32, games_won: i32) -> i32 {
+    let win_rate = games_won as f32 / games_played as f32;
+    (win_rate * 100.0).round() as i32
 }
