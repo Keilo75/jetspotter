@@ -37,6 +37,9 @@ impl eframe::App for Jetspotter {
             CentralPanel::default().show(ctx, |ui| {
                 ui.columns(2, |cols| {
                     cols[0].group(|ui| {
+                        if self.state.persistent.aircraft.len() == 0 {
+                            ui.set_enabled(false);
+                        }
                         self.views.play_panel.ui(ui, &mut self.state);
                     });
 

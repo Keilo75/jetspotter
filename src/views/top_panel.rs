@@ -1,6 +1,6 @@
-use eframe::egui;
+use eframe::egui::{self, Button};
 
-use crate::jetspotter::AppState;
+use crate::jetspotter::{AppPanel, AppState};
 
 pub struct TopPanelView;
 
@@ -17,11 +17,14 @@ impl super::View for TopPanelView {
             ui.heading("Jetspotter");
 
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                let theme_btn = ui.button(if state.persistent.dark_mode {
-                    "🌞"
-                } else {
-                    "🌙"
-                });
+                let theme_btn = ui.add_enabled(
+                    state.app_panel != AppPanel::Fetching,
+                    Button::new(if state.persistent.dark_mode {
+                        "🌞"
+                    } else {
+                        "🌙"
+                    }),
+                );
 
                 if theme_btn.clicked() {
                     state.persistent.dark_mode = !state.persistent.dark_mode;
