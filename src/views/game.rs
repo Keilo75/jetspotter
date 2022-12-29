@@ -27,11 +27,19 @@ impl Default for Game {
 #[derive(PartialEq)]
 pub enum GameResult {
     None,
+    Exit,
+}
+
+impl Game {
+    pub fn start_game(&mut self) {
+        self.photo = None;
+        self.promise = None;
+    }
 }
 
 impl super::View<GameResult> for Game {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) -> GameResult {
-        let result = GameResult::None;
+        let mut result = GameResult::None;
         if self.photo.is_none() {
             let new_photo = state.persistent.aircraft.pop().unwrap();
             let (sender, promise) = Promise::new();
@@ -67,7 +75,9 @@ impl super::View<GameResult> for Game {
                     });
 
                     ui.separator();
-                    ui.button("Exit");
+                    if ui.button("Exit").clicked() {
+                        result = GameResult::Exit;
+                    }
                 });
             } else {
                 ui.horizontal(|ui| {
