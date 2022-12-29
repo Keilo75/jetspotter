@@ -85,6 +85,31 @@ impl super::View<GameResult> for Game {
                                 format!("That's incorrect. The correct answer is {}.", &photo.kind),
                             );
                         }
+
+                        let index = state
+                            .persistent
+                            .results
+                            .aircraft_results
+                            .iter()
+                            .position(|r| r.aircraft == photo.kind)
+                            .unwrap();
+
+                        state.persistent.results.games_played += 1;
+                        let aircraft = &mut state.persistent.results.aircraft_results[index];
+                        aircraft.games_played += 1;
+
+                        if is_correct_guess {
+                            state.persistent.results.games_won += 1;
+                            aircraft.games_won += 1
+                        } else {
+                            let guess = &guess.to_string();
+
+                            aircraft
+                                .misses
+                                .insert(guess.clone(), *aircraft.misses.get(guess).unwrap_or(&0));
+                        }
+
+                        state.persistent.save();
                     } else {
                         ui.horizontal_wrapped(|ui| {
                             for kind in AircraftKind::iter() {
