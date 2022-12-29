@@ -29,15 +29,16 @@ impl PersistentData {
 
 impl Default for PersistentData {
     fn default() -> Self {
-        let mut aircraft_results = HashMap::new();
+        let mut aircraft_results = Vec::new();
         for aircraft_kind in AircraftKind::iter() {
             let aircraft_result = AircraftResult {
+                aircraft: aircraft_kind,
                 games_played: 0,
                 games_won: 0,
                 misses: HashMap::new(),
             };
 
-            aircraft_results.insert(aircraft_kind.to_string(), aircraft_result);
+            aircraft_results.push(Box::new(aircraft_result));
         }
 
         let results = Results {
@@ -59,11 +60,12 @@ impl Default for PersistentData {
 pub struct Results {
     pub games_played: i32,
     pub games_won: i32,
-    pub aircraft_results: HashMap<String, AircraftResult>,
+    pub aircraft_results: Vec<Box<AircraftResult>>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct AircraftResult {
+    pub aircraft: AircraftKind,
     pub games_played: i32,
     pub games_won: i32,
     pub misses: HashMap<String, i32>,
