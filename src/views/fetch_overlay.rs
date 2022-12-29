@@ -2,7 +2,7 @@ use eframe::egui::ProgressBar;
 use poll_promise::Promise;
 
 use crate::{
-    jetphotos::{self, AircraftPhoto},
+    jetphotos::{self, aircraft_photo::AircraftPhoto},
     jetspotter::{AppPanel, AppState},
 };
 

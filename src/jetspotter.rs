@@ -1,12 +1,12 @@
 use std::collections::HashMap;
-use strum::IntoEnumIterator;
 
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    jetphotos::{AircraftKind, AircraftPhoto},
+    jetphotos::aircraft_photo::{AircraftKind, AircraftPhoto},
     views::Views,
 };
+use strum::IntoEnumIterator;
 
 #[derive(Serialize, Deserialize)]
 pub struct PersistentData {
@@ -91,7 +91,6 @@ impl Default for AppState {
 
 pub struct Jetspotter {
     pub state: AppState,
-
     pub views: Views,
 }
 
@@ -99,7 +98,6 @@ impl Jetspotter {
     pub fn new() -> Self {
         Jetspotter {
             state: Default::default(),
-
             views: Default::default(),
         }
     }
