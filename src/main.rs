@@ -1,7 +1,7 @@
 use eframe::{
     egui,
-    egui::Visuals,
     egui::{CentralPanel, ProgressBar},
+    egui::{TopBottomPanel, Visuals},
 };
 use poll_promise::Promise;
 
@@ -30,7 +30,9 @@ impl eframe::App for Jetspotter {
             ctx.set_visuals(Visuals::light());
         }
 
-        self.render_top_panel(ctx);
+        TopBottomPanel::top("top").show(ctx, |ui| {
+            self.views.top_panel.ui(&mut self.persistent, ui);
+        });
 
         CentralPanel::default().show(ctx, |ui| {
             ui.set_enabled(self.state != AppState::Fetching);

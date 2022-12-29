@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
-use eframe::egui::{self, DragValue, Ui};
-use eframe::egui::{Context, TopBottomPanel};
+use eframe::egui::{DragValue, Ui};
 use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 
@@ -94,29 +93,6 @@ impl Jetspotter {
             page: 1,
             views: Default::default(),
         }
-    }
-
-    pub fn render_top_panel(&mut self, ctx: &Context) {
-        TopBottomPanel::top("top").show(ctx, |ui| {
-            ui.add_space(5.0);
-            egui::menu::bar(ui, |ui| {
-                ui.heading("Jetspotter");
-
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    let theme_btn = ui.button(if self.persistent.dark_mode {
-                        "🌞"
-                    } else {
-                        "🌙"
-                    });
-
-                    if theme_btn.clicked() {
-                        self.persistent.dark_mode = !self.persistent.dark_mode;
-                        self.persistent.save();
-                    }
-                });
-            });
-            ui.add_space(5.0);
-        });
     }
 
     pub fn render_fetch_aircraft_panel(&mut self, ui: &mut Ui) {
