@@ -7,7 +7,7 @@ use poll_promise::Sender;
 
 const WAIT_DURATION: Duration = Duration::from_millis(5_000);
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
 pub enum AircraftKind {
     A220,
     A300,
@@ -33,13 +33,13 @@ pub enum AircraftKind {
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct AircraftPhoto {
-    id: String,
-    url: String,
-    photographer: String,
-    kind: AircraftKind,
-    full_kind: String,
-    registration: String,
-    airline: String,
+    pub id: String,
+    pub url: String,
+    pub photographer: String,
+    pub kind: AircraftKind,
+    pub full_kind: String,
+    pub registration: String,
+    pub airline: String,
 }
 
 pub fn fetch_photos(sender: Sender<Vec<AircraftPhoto>>, current: usize, total: i32, page: i32) {
@@ -104,8 +104,6 @@ pub fn parse_photo_div(div: ElementRef) -> AircraftPhoto {
         airline,
         registration,
     };
-
-    dbg!(&photo);
 
     photo
 }

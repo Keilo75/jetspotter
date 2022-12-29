@@ -98,10 +98,11 @@ impl Jetspotter {
 
     pub fn render_play_panel(&mut self, ui: &mut Ui) {
         ui.heading("Play");
-        ui.label(format!("{} aircraft cached.", self.aircraft.len()));
         if ui.button("Play").clicked() {
             println!("Playing");
         }
+
+        ui.label(format!("{} aircraft cached.", self.aircraft.len()));
     }
 
     pub fn render_fetch_aircraft_panel(&mut self, ui: &mut Ui) {
@@ -126,5 +127,9 @@ impl Jetspotter {
 
             ui.label("This may take a while.");
         });
+    }
+
+    pub fn render_statistics_panel(&mut self, ui: &mut Ui) {
+        ui.heading("Statistics");
     }
 }

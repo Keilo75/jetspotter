@@ -49,6 +49,11 @@ impl eframe::App for Jetspotter {
                     });
                 }
             });
+
+            ui.add_space(10.0);
+            ui.group(|ui| {
+                self.render_statistics_panel(ui);
+            });
         });
 
         if self.state == AppState::Fetching {
