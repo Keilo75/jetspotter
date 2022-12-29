@@ -7,9 +7,9 @@ pub mod statistics_panel;
 pub mod top_panel;
 
 pub struct Views {
-    pub statistics_panel: statistics_panel::StatisticsView,
-    pub play_panel: play_panel::PlayView,
-    pub top_panel: top_panel::TopPanelView,
+    pub statistics_panel: statistics_panel::StatisticsPanel,
+    pub play_panel: play_panel::PlayPanel,
+    pub top_panel: top_panel::TopPanel,
     pub fetch_panel: fetch_panel::FetchPanel,
     pub fetch_overlay: fetch_overlay::FetchOverlay,
 }
@@ -17,9 +17,9 @@ pub struct Views {
 impl Default for Views {
     fn default() -> Self {
         Views {
-            statistics_panel: statistics_panel::StatisticsView::default(),
-            play_panel: play_panel::PlayView::default(),
-            top_panel: top_panel::TopPanelView::default(),
+            statistics_panel: statistics_panel::StatisticsPanel::default(),
+            play_panel: play_panel::PlayPanel::default(),
+            top_panel: top_panel::TopPanel::default(),
             fetch_panel: fetch_panel::FetchPanel::default(),
             fetch_overlay: fetch_overlay::FetchOverlay::default(),
         }

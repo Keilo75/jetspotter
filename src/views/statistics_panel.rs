@@ -19,12 +19,12 @@ enum SortDirection {
     Descending,
 }
 
-pub struct StatisticsView {
+pub struct StatisticsPanel {
     sort: Sort,
     sort_direction: SortDirection,
 }
 
-impl Default for StatisticsView {
+impl Default for StatisticsPanel {
     fn default() -> Self {
         Self {
             sort: Sort::Name,
@@ -33,7 +33,7 @@ impl Default for StatisticsView {
     }
 }
 
-impl super::View for StatisticsView {
+impl super::View for StatisticsPanel {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
         ui.horizontal(|ui| {
             ui.horizontal(|ui| {

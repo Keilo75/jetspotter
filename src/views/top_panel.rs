@@ -2,15 +2,15 @@ use eframe::egui::{menu, Align, Button, Layout};
 
 use crate::jetspotter::{AppPanel, AppState};
 
-pub struct TopPanelView;
+pub struct TopPanel;
 
-impl Default for TopPanelView {
+impl Default for TopPanel {
     fn default() -> Self {
         Self {}
     }
 }
 
-impl super::View for TopPanelView {
+impl super::View for TopPanel {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
         ui.add_space(5.0);
         menu::bar(ui, |ui| {

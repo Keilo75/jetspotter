@@ -1,14 +1,14 @@
 use crate::jetspotter::AppState;
 
-pub struct PlayView;
+pub struct PlayPanel;
 
-impl Default for PlayView {
+impl Default for PlayPanel {
     fn default() -> Self {
         Self {}
     }
 }
 
-impl super::View for PlayView {
+impl super::View for PlayPanel {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
         if ui.button("Play").clicked() {
             println!("Playing");
