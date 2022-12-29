@@ -2,12 +2,13 @@ use scraper::{ElementRef, Html, Selector};
 use serde::{Deserialize, Serialize};
 use std::thread;
 use std::time::{Duration, Instant};
+use strum_macros::{Display, EnumIter};
 
 use poll_promise::Sender;
 
 const WAIT_DURATION: Duration = Duration::from_millis(5_000);
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq, Hash, EnumIter, Display)]
 pub enum AircraftKind {
     A220,
     A300,
