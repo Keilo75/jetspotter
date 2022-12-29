@@ -85,36 +85,39 @@ impl super::View<GameResult> for Game {
                                 format!("That's incorrect. The correct answer is {}.", &photo.kind),
                             );
                         }
-
-                        let index = state
-                            .persistent
-                            .results
-                            .aircraft_results
-                            .iter()
-                            .position(|r| r.aircraft == photo.kind)
-                            .unwrap();
-
-                        state.persistent.results.games_played += 1;
-                        let aircraft = &mut state.persistent.results.aircraft_results[index];
-                        aircraft.games_played += 1;
-
-                        if is_correct_guess {
-                            state.persistent.results.games_won += 1;
-                            aircraft.games_won += 1
-                        } else {
-                            let guess = &guess.to_string();
-
-                            aircraft
-                                .misses
-                                .insert(guess.clone(), *aircraft.misses.get(guess).unwrap_or(&0));
-                        }
-
-                        state.persistent.save();
                     } else {
                         ui.horizontal_wrapped(|ui| {
                             for kind in AircraftKind::iter() {
                                 if ui.button(kind.to_string()).clicked() {
-                                    self.guess = Some(kind);
+                                    self.guess = Some(kind.clone());
+                                    let is_correct_guess = kind == photo.kind;
+
+                                    let index = state
+                                        .persistent
+                                        .results
+                                        .aircraft_results
+                                        .iter()
+                                        .position(|r| r.aircraft == photo.kind)
+                                        .unwrap();
+
+                                    state.persistent.results.games_played += 1;
+                                    let aircraft =
+                                        &mut state.persistent.results.aircraft_results[index];
+                                    aircraft.games_played += 1;
+
+                                    if is_correct_guess {
+                                        state.persistent.results.games_won += 1;
+                                        aircraft.games_won += 1
+                                    } else {
+                                        let kind = kind.to_string();
+
+                                        aircraft.misses.insert(
+                                            kind.clone(),
+                                            *aircraft.misses.get(&kind).unwrap_or(&0),
+                                        );
+                                    }
+
+                                    state.persistent.save();
                                 }
                             }
                         });
@@ -128,7 +131,9 @@ impl super::View<GameResult> for Game {
                                 result = GameResult::Exit;
                             }
 
-                            if ui.button("Next photo").clicked() {
+                            if state.persistent.aircraft.len() > 0
+                                && ui.button("Next photo").clicked()
+                            {
                                 result = GameResult::NextPhoto;
                             }
                         });
