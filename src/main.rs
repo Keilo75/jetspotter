@@ -1,6 +1,6 @@
 use eframe::{
     egui,
-    egui::CentralPanel,
+    egui::{CentralPanel, RichText},
     egui::{TopBottomPanel, Visuals},
 };
 
@@ -35,6 +35,7 @@ impl eframe::App for Jetspotter {
 
         if self.state.app_panel == AppPanel::Menu {
             CentralPanel::default().show(ctx, |ui| {
+                ui.label(RichText::new("Play").heading().strong());
                 ui.columns(2, |cols| {
                     cols[0].group(|ui| {
                         if self.state.persistent.aircraft.len() == 0 {
@@ -56,7 +57,7 @@ impl eframe::App for Jetspotter {
                 });
 
                 ui.add_space(10.0);
-                ui.group(|ui| self.views.statistics_panel.ui(ui, &mut self.state));
+                self.views.statistics_panel.ui(ui, &mut self.state);
             });
         }
 

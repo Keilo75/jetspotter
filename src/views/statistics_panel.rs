@@ -1,4 +1,4 @@
-use eframe::egui::{Align, ComboBox, Label, Layout, ScrollArea};
+use eframe::egui::{Align, ComboBox, Label, Layout, RichText, ScrollArea};
 use strum::IntoEnumIterator;
 use strum_macros::{Display, EnumIter};
 
@@ -35,14 +35,15 @@ impl Default for StatisticsView {
 
 impl super::View for StatisticsView {
     fn ui(&mut self, ui: &mut eframe::egui::Ui, state: &mut AppState) {
-        ui.heading("Statistics");
-
         ui.horizontal(|ui| {
-            ui.add(stats(
-                state.persistent.results.games_played,
-                state.persistent.results.games_won,
-            ));
+            ui.horizontal(|ui| {
+                ui.label(RichText::new("Aircraft Statistics").heading().strong());
 
+                ui.add(stats(
+                    state.persistent.results.games_played,
+                    state.persistent.results.games_won,
+                ));
+            });
             ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
                 ComboBox::from_label("")
                     .selected_text(self.sort_direction.to_string())
@@ -69,32 +70,25 @@ impl super::View for StatisticsView {
             });
         });
 
-        ui.separator();
         let sorted_results = sort_results(
             &state.persistent.results.aircraft_results,
             &self.sort,
             &self.sort_direction,
         );
 
-        ScrollArea::vertical().show(ui, |ui| {
-            for result in sorted_results {
-                ui.heading(result.aircraft.to_string());
-            }
+        ui.group(|ui| {
+            ScrollArea::vertical().show(ui, |ui| {
+                for (i, result) in sorted_results.enumerate() {
+                    if i != 0 {
+                        ui.separator();
+                    }
+
+                    ui.label(RichText::new(result.aircraft.to_string()).heading());
+                    ui.add(stats(result.games_played, result.games_won));
+                }
+            });
         });
     }
-}
-
-fn stats(games_played: i32, games_won: i32) -> Label {
-    let win_rate = if games_played == 0 {
-        0.0
-    } else {
-        games_won as f32 / games_played as f32
-    };
-
-    Label::new(format!(
-        "Games played: {} | Games won: {} | Win rate: {}%",
-        games_played, games_won, win_rate
-    ))
 }
 
 fn sort_results<'a>(
@@ -114,4 +108,18 @@ fn sort_results<'a>(
     } else {
         Box::new(sorted)
     }
+}
+
+pub fn stats(games_played: i32, games_won: i32) -> Label {
+    let win_rate = if games_played == 0 {
+        0.0
+    } else {
+        let win_rate = games_won as f32 / games_played as f32;
+        (win_rate * 100.0).round()
+    };
+
+    Label::new(format!(
+        "Games played: {} | Games won: {} | Win rate: {}%",
+        games_played, games_won, win_rate
+    ))
 }
