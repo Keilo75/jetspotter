@@ -9,6 +9,7 @@ mod jetphotos;
 mod jetspotter;
 mod views;
 use jetspotter::{AppState, Jetspotter};
+use views::View;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -42,7 +43,7 @@ impl eframe::App for Jetspotter {
                         }
 
                         match i {
-                            0 => self.render_play_panel(ui),
+                            0 => self.views.play.ui(&mut self.persistent, ui),
                             1 => self.render_fetch_aircraft_panel(ui),
                             _ => unreachable!(),
                         };
@@ -51,9 +52,7 @@ impl eframe::App for Jetspotter {
             });
 
             ui.add_space(10.0);
-            ui.group(|ui| {
-                self.render_statistics_panel(ui);
-            });
+            ui.group(|ui| self.views.statistics.ui(&mut self.persistent, ui));
         });
 
         if self.state == AppState::Fetching {

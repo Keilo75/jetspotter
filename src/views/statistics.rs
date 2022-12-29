@@ -1,14 +1,14 @@
 use crate::jetspotter::{PersistentData, Results};
 
-pub struct Statistics;
+pub struct StatisticsView;
 
-impl Default for Statistics {
+impl Default for StatisticsView {
     fn default() -> Self {
         Self {}
     }
 }
 
-impl super::View for Statistics {
+impl super::View for StatisticsView {
     fn ui(&mut self, persistent: &mut PersistentData, ui: &mut eframe::egui::Ui) {
         ui.heading("Statistics");
 

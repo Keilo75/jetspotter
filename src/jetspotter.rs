@@ -7,7 +7,7 @@ use poll_promise::Promise;
 use serde::{Deserialize, Serialize};
 
 use crate::jetphotos::{AircraftKind, AircraftPhoto};
-use crate::views::{View, Views};
+use crate::views::Views;
 
 #[derive(Serialize, Deserialize)]
 pub struct PersistentData {
@@ -119,18 +119,6 @@ impl Jetspotter {
         });
     }
 
-    pub fn render_play_panel(&mut self, ui: &mut Ui) {
-        ui.heading("Play");
-        if ui.button("Play").clicked() {
-            println!("Playing");
-        }
-
-        ui.label(format!(
-            "{} aircraft cached.",
-            self.persistent.aircraft.len()
-        ));
-    }
-
     pub fn render_fetch_aircraft_panel(&mut self, ui: &mut Ui) {
         ui.label("Fetch Amount");
         let fetch_amount_input = ui.add(DragValue::new(&mut self.persistent.fetch_amount));
@@ -151,9 +139,5 @@ impl Jetspotter {
 
             ui.label("This may take a while.");
         });
-    }
-
-    pub fn render_statistics_panel(&mut self, ui: &mut Ui) {
-        self.views.statistics.ui(&mut self.persistent, ui);
     }
 }
