@@ -84,7 +84,36 @@ impl super::View for StatisticsPanel {
                     }
 
                     ui.label(RichText::new(result.aircraft.to_string()).heading());
-                    ui.add(stats(result.games_played, result.games_won));
+
+                    ui.horizontal(|ui| {
+                        ui.add(stats(result.games_played, result.games_won));
+
+                        if !result.misses.is_empty() {
+                            ui.with_layout(Layout::right_to_left(Align::TOP), |ui| {
+                                let mut misses = result
+                                    .misses
+                                    .iter()
+                                    .map(|(id, num)| (id.clone(), num.clone()))
+                                    .collect::<Vec<(String, i32)>>();
+
+                                misses.sort_by_key(|m| m.1);
+                                let joined_misses = misses
+                                    .iter()
+                                    .take(3)
+                                    .map(|(id, num)| {
+                                        let percentage = calculate_win_rate(
+                                            result.misses.keys().len() as i32,
+                                            *num,
+                                        );
+                                        format!("{} ({}%)", id, percentage)
+                                    })
+                                    .collect::<Vec<String>>()
+                                    .join(", ");
+
+                                ui.label(format!("Common Misses: {}", joined_misses));
+                            });
+                        }
+                    });
                 }
             });
         });
