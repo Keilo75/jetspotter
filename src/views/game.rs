@@ -113,7 +113,11 @@ impl super::View<GameResult> for Game {
 
                                         aircraft.misses.insert(
                                             kind.clone(),
-                                            *aircraft.misses.get(&kind).unwrap_or(&1),
+                                            aircraft
+                                                .misses
+                                                .get(&kind)
+                                                .and_then(|m| Some(m + 1))
+                                                .unwrap_or(1),
                                         );
                                     }
 
