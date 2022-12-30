@@ -96,13 +96,13 @@ impl super::View for StatisticsPanel {
                                     .map(|(id, num)| (id.clone(), num.clone()))
                                     .collect::<Vec<(String, i32)>>();
 
-                                misses.sort_by_key(|m| m.1);
+                                misses.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
                                 let joined_misses = misses
                                     .iter()
                                     .take(3)
                                     .map(|(id, num)| {
                                         let percentage = calculate_win_rate(
-                                            result.misses.keys().len() as i32,
+                                            result.games_played - result.games_won,
                                             *num,
                                         );
                                         format!("{} ({}%)", id, percentage)
