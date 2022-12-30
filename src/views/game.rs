@@ -74,16 +74,14 @@ impl super::View<GameResult> for Game {
                     ui.add_space(5.0);
 
                     if let Some(guess) = &self.guess {
+                        ui.label(&photo.full_kind);
                         ui.label(format!("You guessed: {}", guess.to_string()));
 
                         let is_correct_guess = guess == &photo.kind;
                         if is_correct_guess {
                             ui.colored_label(Color32::LIGHT_GREEN, "That's correct!");
                         } else {
-                            ui.colored_label(
-                                Color32::LIGHT_RED,
-                                format!("That's incorrect. The correct answer is {}.", &photo.kind),
-                            );
+                            ui.colored_label(Color32::LIGHT_RED, "That's incorrect!");
                         }
                     } else {
                         ui.horizontal_wrapped(|ui| {
