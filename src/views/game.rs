@@ -125,21 +125,28 @@ impl super::View<GameResult> for Game {
                         });
                     }
 
-                    if self.guess.is_some() {
-                        ui.separator();
+                    ui.separator();
 
-                        ui.with_layout(Layout::right_to_left(Align::TOP), |ui| {
-                            if ui.button("Exit").clicked() {
-                                result = GameResult::Exit;
-                            }
+                    ui.horizontal(|ui| {
+                        ui.label(format!(
+                            "{} photos left",
+                            state.persistent.aircraft.len() + 1
+                        ));
 
-                            if state.persistent.aircraft.len() > 0
-                                && ui.button("Next photo").clicked()
-                            {
-                                result = GameResult::NextPhoto;
-                            }
-                        });
-                    }
+                        if self.guess.is_some() {
+                            ui.with_layout(Layout::right_to_left(Align::TOP), |ui| {
+                                if ui.button("Exit").clicked() {
+                                    result = GameResult::Exit;
+                                }
+
+                                if state.persistent.aircraft.len() > 0
+                                    && ui.button("Next photo").clicked()
+                                {
+                                    result = GameResult::NextPhoto;
+                                }
+                            });
+                        }
+                    });
                 });
             } else {
                 ui.horizontal(|ui| {
