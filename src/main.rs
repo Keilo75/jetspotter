@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 use eframe::{
     egui,
     egui::{CentralPanel, RichText},
